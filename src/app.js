@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
 
-// v2 expands the API and schema without changing price as the read authority.
+// v3 reads the migrated integer but continues writing both columns for rollback.
 const json = (res, status, body) => {
   res.writeHead(status, { 'content-type': 'application/json' });
   res.end(JSON.stringify(body));
@@ -32,23 +32,21 @@ function parsePrice(body) {
 
 export function createApp(db) {
   const q = {
-    list: db.prepare('SELECT id, name, price, price_vnd FROM menu_items ORDER BY id LIMIT ? OFFSET ?'),
-    get: db.prepare('SELECT id, name, price, price_vnd FROM menu_items WHERE id = ?'),
+    list: db.prepare('SELECT id, name, price_vnd / 1000.0 AS price, price_vnd FROM menu_items ORDER BY id LIMIT ? OFFSET ?'),
+    get: db.prepare('SELECT id, name, price_vnd / 1000.0 AS price, price_vnd FROM menu_items WHERE id = ?'),
     insert: db.prepare('INSERT INTO menu_items (name, price, price_vnd) VALUES (?, ?, ?)'),
     setPrice: db.prepare('UPDATE menu_items SET price = ?, price_vnd = ? WHERE id = ?'),
     insertOrder: db.prepare("INSERT INTO orders (created_at) VALUES (datetime('now'))"),
     insertLine: db.prepare('INSERT INTO order_items (order_id, menu_item_id, qty, unit_price) VALUES (?, ?, ?, ?)'),
   };
 
-  // During a rolling v1/v2 deployment, v1 may have changed price without
-  // updating price_vnd. Derive the API value from price until backfill is done.
-  const view = (row) => ({ id: row.id, name: row.name, price: row.price, priceVnd: Math.round(row.price * 1000) });
+  const view = (row) => ({ id: row.id, name: row.name, price: row.price_vnd / 1000, priceVnd: row.price_vnd });
 
   async function handle(req, res) {
     const url = new URL(req.url, 'http://x');
     const parts = url.pathname.split('/').filter(Boolean);
 
-    if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, { ok: true, version: 'v2' });
+    if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, { ok: true, version: 'v3' });
 
     if (parts[0] === 'menu' && parts.length === 1) {
       if (req.method === 'GET') {
