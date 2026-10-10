@@ -4,3 +4,5 @@ data/
 *.db-*
 check-rehearsal-*.txt
 traffic-rehearsal-*.txt
+check-attempt-*.txt
+traffic-attempt-*.txt

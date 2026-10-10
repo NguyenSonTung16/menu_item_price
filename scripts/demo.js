@@ -130,10 +130,18 @@ function pause(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function setControl(step, ratio, stop = false) {
+async function setControl(step, ratio, stop = false) {
   const temp = control + '.tmp';
   writeFileSync(temp, JSON.stringify({ STEP: step, NEW_CLIENTS: ratio, STOP: stop }, null, 2) + '\n');
-  renameSync(temp, control);
+  for (let attempt = 0; ; attempt++) {
+    try {
+      renameSync(temp, control);
+      return;
+    } catch (error) {
+      if (attempt >= 9 || !['EPERM', 'EACCES', 'EBUSY'].includes(error.code)) throw error;
+      await pause(25 * (attempt + 1));
+    }
+  }
 }
 
 async function checkTrafficRunning() {
@@ -238,7 +246,7 @@ async function main() {
       startServer('v1', port, worktrees.get('v1'));
       await healthy(port, 'v1');
     }
-    setControl('S0 old clients only', 0);
+    await setControl('S0 old clients only', 0);
     traffic = spawn(process.execPath, [join(ROOT, 'scripts', 'traffic.js')], {
       cwd: ROOT,
       env: {
@@ -255,51 +263,51 @@ async function main() {
     await checkTrafficRunning();
     check('S0 live traffic');
 
-    setControl('S1 expand', 0);
+    await setControl('S1 expand', 0);
     ok(npm(['run', 'migrate', '--', '--to', '002_expand_price_vnd'], 'S1 add nullable price_vnd under traffic'), '002 up');
     check('S1 expand');
 
     await roll(ports[0], 'v2', worktrees);
-    setControl('S2A A=v2 B=v1', 0);
+    await setControl('S2A A=v2 B=v1', 0);
     check('S2A mixed versions', { allowLegacyStale: true });
     assertNoTrafficFailures();
     await roll(ports[1], 'v2', worktrees);
-    setControl('S2B both dual-write; enable new clients', 0.3);
+    await setControl('S2B both dual-write; enable new clients', 0.3);
     await pause(1000);
     check('S2B both v2', { allowLegacyStale: true });
 
-    setControl('S3 backfill', 0.3);
+    await setControl('S3 backfill', 0.3);
     ok(npm(['run', 'backfill', '--', '--batch-size=500', '--delay-ms=25'], 'S3 backfill under traffic'), 'backfill');
     ok(npm(['run', 'backfill', '--', '--batch-size=500', '--delay-ms=0'], 'S3 idempotence rerun'), 'backfill rerun');
     check('S3 after backfill');
     assertNoTrafficFailures();
 
     await roll(ports[0], 'v3', worktrees);
-    setControl('S4A A=v3 B=v2', 0.3);
+    await setControl('S4A A=v3 B=v2', 0.3);
     check('S4A mixed readers');
     await roll(ports[1], 'v3', worktrees);
-    setControl('S4B both read price_vnd and dual-write', 0.3);
+    await setControl('S4B both read price_vnd and dual-write', 0.3);
     check('S4B both v3');
     assertNoTrafficFailures();
 
     await roll(ports[0], 'v2', worktrees);
-    setControl('R1A rollback A to v2', 0.3);
+    await setControl('R1A rollback A to v2', 0.3);
     check('R1A A=v2 B=v3');
     await roll(ports[1], 'v2', worktrees);
-    setControl('R1B rollback both to v2', 0.3);
+    await setControl('R1B rollback both to v2', 0.3);
     check('R1B both v2');
     assertNoTrafficFailures();
 
     await roll(ports[0], 'v3', worktrees);
-    setControl('R2A forward A to v3', 0.3);
+    await setControl('R2A forward A to v3', 0.3);
     check('R2A A=v3 B=v2');
     await roll(ports[1], 'v3', worktrees);
-    setControl('R2B forward both to v3', 0.3);
+    await setControl('R2B forward both to v3', 0.3);
     check('R2B both v3');
     assertNoTrafficFailures();
 
     await roll(ports[0], 'v4', worktrees);
-    setControl('S5A v4 writes only price_vnd', 0.3);
+    await setControl('S5A v4 writes only price_vnd', 0.3);
     const probe = await fetch('http://127.0.0.1:' + ports[0] + '/menu/20000', {
       method: 'PATCH',
       headers: { 'content-type': 'application/json' },
@@ -310,7 +318,7 @@ async function main() {
     record('S5A probe: v4 PATCH /menu/20000 -> ' + probe.status + ' price=' + probeBody.price + ' priceVnd=' + probeBody.priceVnd);
     check('S5A A=v4 B=v3 legacy mismatch expected', { allowLegacyStale: true, checkVnd: true });
     await roll(ports[1], 'v4', worktrees);
-    setControl('S5B both v4', 0.3);
+    await setControl('S5B both v4', 0.3);
     check('S5B both v4 legacy mismatch expected', { allowLegacyStale: true, checkVnd: true });
     assertNoTrafficFailures();
 
@@ -318,10 +326,10 @@ async function main() {
     check('S6 after contract');
     await smokeApi();
     check('S6 after API probes');
-    setControl('S7 traffic after drop', 0.3);
+    await setControl('S7 traffic after drop', 0.3);
     await pause(6000);
     assertNoTrafficFailures();
-    setControl('S7 finishing traffic log', 0.3, true);
+    await setControl('S7 finishing traffic log', 0.3, true);
     await Promise.race([
       new Promise((resolve) => traffic.once('exit', resolve)),
       new Promise((_, reject) => setTimeout(() => reject(new Error('traffic did not finish after control stop')), 15000)),
