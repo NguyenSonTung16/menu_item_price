@@ -366,10 +366,11 @@ async function main() {
     cleaning = true;
     if (traffic) await stop(traffic, 'traffic cleanup').catch((e) => record('cleanup warning: ' + e.message));
     for (const [port, child] of servers) await stop(child, 'server ' + port + ' cleanup').catch((e) => record('cleanup warning: ' + e.message));
-    for (const [tag, path] of worktrees) {
-      run('git', ['worktree', 'remove', '--force', path], 'cleanup worktree ' + tag);
-    }
+    // Delete the temporary checkout tree first, then prune its now-stale Git
+    // administrative records. This avoids Windows/OneDrive failing while Git
+    // tries to delete its own metadata at the same time as the checkout.
     rmSync(scratch, { recursive: true, force: true });
+    run('git', ['worktree', 'prune', '--expire=now', '--verbose'], 'cleanup temporary worktree metadata');
   }
 }
 
