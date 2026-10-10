@@ -2,3 +2,5 @@ node_modules/
 data/
 *.db
 *.db-*
+check-rehearsal-*.txt
+traffic-rehearsal-*.txt

@@ -71,6 +71,7 @@ const pick = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
 let newClientRatio = INITIAL_NEW_CLIENTS;
 let controlStep = '';
 let controlError = '';
+let stopWasRequested = false;
 const isNew = () => Math.random() < newClientRatio;
 
 function checkItem(r, client, where) {
@@ -190,6 +191,11 @@ if (CONTROL_FILE) {
         log(`${ts()} CONTROL step=${step || '(none)'} NEW_CLIENTS=${newClientRatio} -> ${ratio} client_old=${n.client_old} client_new=${n.client_new}`);
         newClientRatio = ratio;
         controlStep = step;
+      }
+      if (config.STOP === true && !stopWasRequested) {
+        stopWasRequested = true;
+        log(`${ts()} CONTROL stop requested; finishing in-flight requests`);
+        stop = true;
       }
       controlError = '';
     } catch (e) {
