@@ -1,8 +1,6 @@
 import { createServer } from 'node:http';
 
-// v1 of the menu service. Prices are stored in THOUSANDS of dong, as a float:
-// 45.5 means 45,500 đ. That was last year's decision; IA#2 undoes it.
-
+// v2 expands the API and schema without changing price as the read authority.
 const json = (res, status, body) => {
   res.writeHead(status, { 'content-type': 'application/json' });
   res.end(JSON.stringify(body));
@@ -17,24 +15,40 @@ async function readBody(req) {
 }
 
 const isPrice = (p) => typeof p === 'number' && Number.isFinite(p) && p > 0 && p <= 100000;
+const isPriceVnd = (p) => Number.isSafeInteger(p) && p > 0 && p <= 100000000;
+
+function parsePrice(body) {
+  if (!body || typeof body !== 'object') return null;
+  const hasOld = Object.hasOwn(body, 'price');
+  const hasNew = Object.hasOwn(body, 'priceVnd');
+  if (!hasOld && !hasNew) return null;
+  if (hasOld && !isPrice(body.price)) return null;
+  if (hasNew && !isPriceVnd(body.priceVnd)) return null;
+  const priceVnd = hasNew ? body.priceVnd : Math.round(body.price * 1000);
+  if (!Number.isSafeInteger(priceVnd) || priceVnd <= 0 || priceVnd > 100000000) return null;
+  if (hasOld && hasNew && Math.round(body.price * 1000) !== body.priceVnd) return null;
+  return { price: hasNew ? priceVnd / 1000 : body.price, priceVnd };
+}
 
 export function createApp(db) {
   const q = {
-    list: db.prepare('SELECT id, name, price FROM menu_items ORDER BY id LIMIT ? OFFSET ?'),
-    get: db.prepare('SELECT id, name, price FROM menu_items WHERE id = ?'),
-    insert: db.prepare('INSERT INTO menu_items (name, price) VALUES (?, ?)'),
-    setPrice: db.prepare('UPDATE menu_items SET price = ? WHERE id = ?'),
+    list: db.prepare('SELECT id, name, price, price_vnd FROM menu_items ORDER BY id LIMIT ? OFFSET ?'),
+    get: db.prepare('SELECT id, name, price, price_vnd FROM menu_items WHERE id = ?'),
+    insert: db.prepare('INSERT INTO menu_items (name, price, price_vnd) VALUES (?, ?, ?)'),
+    setPrice: db.prepare('UPDATE menu_items SET price = ?, price_vnd = ? WHERE id = ?'),
     insertOrder: db.prepare("INSERT INTO orders (created_at) VALUES (datetime('now'))"),
     insertLine: db.prepare('INSERT INTO order_items (order_id, menu_item_id, qty, unit_price) VALUES (?, ?, ?, ?)'),
   };
 
-  const view = (row) => ({ id: row.id, name: row.name, price: row.price });
+  // During a rolling v1/v2 deployment, v1 may have changed price without
+  // updating price_vnd. Derive the API value from price until backfill is done.
+  const view = (row) => ({ id: row.id, name: row.name, price: row.price, priceVnd: Math.round(row.price * 1000) });
 
   async function handle(req, res) {
     const url = new URL(req.url, 'http://x');
     const parts = url.pathname.split('/').filter(Boolean);
 
-    if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, { ok: true });
+    if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, { ok: true, version: 'v2' });
 
     if (parts[0] === 'menu' && parts.length === 1) {
       if (req.method === 'GET') {
@@ -44,9 +58,10 @@ export function createApp(db) {
       }
       if (req.method === 'POST') {
         const body = await readBody(req);
-        if (!body || typeof body.name !== 'string' || !body.name || !isPrice(body.price))
-          return error(res, 400, 'invalid_body', 'name (string) and price (thousands of dong) are required');
-        const { lastInsertRowid } = q.insert.run(body.name, body.price);
+        const price = parsePrice(body);
+        if (!body || typeof body.name !== 'string' || !body.name || !price)
+          return error(res, 400, 'invalid_body', 'name and a valid price or integer priceVnd are required');
+        const { lastInsertRowid } = q.insert.run(body.name, price.price, price.priceVnd);
         return json(res, 201, view(q.get.get(lastInsertRowid)));
       }
     }
@@ -58,9 +73,9 @@ export function createApp(db) {
       if (req.method === 'GET') return json(res, 200, view(row));
       if (req.method === 'PATCH') {
         const body = await readBody(req);
-        if (!body || !isPrice(body.price))
-          return error(res, 400, 'invalid_body', 'price (thousands of dong) is required');
-        q.setPrice.run(body.price, id);
+        const price = parsePrice(body);
+        if (!price) return error(res, 400, 'invalid_body', 'a valid price or integer priceVnd is required');
+        q.setPrice.run(price.price, price.priceVnd, id);
         return json(res, 200, view(q.get.get(id)));
       }
     }

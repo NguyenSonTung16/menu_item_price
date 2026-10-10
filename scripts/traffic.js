@@ -13,11 +13,12 @@
 // does not show the last acknowledged write ("stale"), and any moment when NO
 // instance answers ("unavailable"). One instance being down while another
 // answers is a rolling restart, not a failure — it is counted as "rerouted".
-import { appendFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 
 const TARGETS = (process.env.TARGETS ?? 'http://localhost:3001,http://localhost:3002').split(',');
 const DURATION = Number(process.env.DURATION ?? 0);
-const NEW_CLIENTS = Number(process.env.NEW_CLIENTS ?? 0);
+const INITIAL_NEW_CLIENTS = Number(process.env.NEW_CLIENTS ?? 0);
+const CONTROL_FILE = process.env.TRAFFIC_CONTROL_FILE;
 const IDS = Number(process.env.IDS ?? 2000);
 const LOG = process.env.LOG ?? 'traffic-log.txt';
 const WORKERS = 8;
@@ -27,7 +28,7 @@ const t0 = Date.now();
 const ts = () => ((Date.now() - t0) / 1000).toFixed(1).padStart(6) + 's';
 const log = (line) => { console.log(line); appendFileSync(LOG, line + '\n'); };
 
-const n = { ok: 0, error: 0, contract: 0, stale: 0, rerouted: 0, unavailable: 0 };
+const n = { ok: 0, error: 0, contract: 0, stale: 0, rerouted: 0, unavailable: 0, client_old: 0, client_new: 0 };
 const firstOf = {};
 const fail = (kind, detail) => {
   n[kind]++;
@@ -67,7 +68,10 @@ const expected = new Map(); // id -> last acknowledged price, in thousands
 const inflight = new Set();
 const created = [];         // ids of items this run created, read back later
 const pick = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
-const isNew = () => Math.random() < NEW_CLIENTS;
+let newClientRatio = INITIAL_NEW_CLIENTS;
+let controlStep = '';
+let controlError = '';
+const isNew = () => Math.random() < newClientRatio;
 
 function checkItem(r, client, where) {
   const d = r.data;
@@ -88,6 +92,7 @@ async function once() {
     const want = expected.get(id);
     const r = await send('GET', `/menu/${id}`);
     if (!r) return fail('unavailable', `GET /menu/${id}`);
+    n[`client_${client}`]++;
     if (r.status >= 500) return fail('error', `GET /menu/${id} -> ${r.status} via ${r.target}`);
     if (r.status !== 200) return fail('contract', `GET /menu/${id} -> ${r.status} via ${r.target}`);
     if (!checkItem(r, client, `GET /menu/${id}`)) return;
@@ -105,6 +110,7 @@ async function once() {
       const body = client === 'new' ? { priceVnd: Math.round(price * 1000) } : { price };
       const r = await send('PATCH', `/menu/${id}`, body);
       if (!r) return fail('unavailable', `PATCH /menu/${id}`);
+      n[`client_${client}`]++;
       if (r.status >= 500) return fail('error', `PATCH /menu/${id} -> ${r.status} via ${r.target}`);
       if (r.status !== 200) return fail('contract', `PATCH /menu/${id} ${JSON.stringify(body)} -> ${r.status} via ${r.target}`);
       expected.set(id, price);
@@ -119,6 +125,7 @@ async function once() {
     const items = [{ menuItemId: pick(1, FIXED), qty: pick(1, 3) }, { menuItemId: pick(1, FIXED), qty: 1 }];
     const r = await send('POST', '/orders', { items });
     if (!r) return fail('unavailable', 'POST /orders');
+    n[`client_${client}`]++;
     if (r.status >= 500) return fail('error', `POST /orders -> ${r.status} via ${r.target}`);
     if (r.status !== 201 || typeof r.data.total !== 'number')
       return fail('contract', `POST /orders -> ${r.status} via ${r.target}: ${JSON.stringify(r.data).slice(0, 120)}`);
@@ -133,6 +140,7 @@ async function once() {
     const body = client === 'new' ? { name: 'Món mới', priceVnd: Math.round(price * 1000) } : { name: 'Món mới', price };
     const r = await send('POST', '/menu', body);
     if (!r) return fail('unavailable', 'POST /menu');
+    n[`client_${client}`]++;
     if (r.status >= 500) return fail('error', `POST /menu -> ${r.status} via ${r.target}`);
     if (r.status !== 201) return fail('contract', `POST /menu ${JSON.stringify(body)} -> ${r.status} via ${r.target}`);
     if (!checkItem(r, client, 'POST /menu')) return;
@@ -145,6 +153,7 @@ async function once() {
 
   const r = await send('GET', `/menu?limit=20&offset=${pick(0, IDS - 20)}`);  // list a page
   if (!r) return fail('unavailable', 'GET /menu');
+  n[`client_${client}`]++;
   if (r.status >= 500) return fail('error', `GET /menu -> ${r.status} via ${r.target}`);
   if (r.status !== 200 || !Array.isArray(r.data) || r.data.some((x) => typeof x.price !== 'number'))
     return fail('contract', `GET /menu via ${r.target}: bad page`);
@@ -158,14 +167,40 @@ for (let id = 1; id <= FIXED; id++) {
   expected.set(id, r.data.price);
 }
 
-log(`\n=== traffic start ${new Date().toISOString()} · targets ${TARGETS.join(' ')} · new clients ${NEW_CLIENTS}`);
+if (!(INITIAL_NEW_CLIENTS >= 0 && INITIAL_NEW_CLIENTS <= 1)) {
+  console.error('NEW_CLIENTS must be between 0 and 1');
+  process.exit(2);
+}
+log(`\n=== traffic start ${new Date().toISOString()} · targets ${TARGETS.join(' ')} · new clients ${INITIAL_NEW_CLIENTS} · control ${CONTROL_FILE ?? 'disabled'}`);
 let stop = false;
 process.on('SIGINT', () => { stop = true; });
 if (DURATION) setTimeout(() => { stop = true; }, DURATION * 1000);
 
+if (CONTROL_FILE) {
+  setInterval(() => {
+    if (!existsSync(CONTROL_FILE)) return;
+    try {
+      const config = JSON.parse(readFileSync(CONTROL_FILE, 'utf8'));
+      const ratio = config.NEW_CLIENTS;
+      if (typeof ratio !== 'number' || !Number.isFinite(ratio) || ratio < 0 || ratio > 1)
+        throw new Error('NEW_CLIENTS in control file must be between 0 and 1');
+      const step = typeof config.STEP === 'string' ? config.STEP : '';
+      if (ratio !== newClientRatio || step !== controlStep) {
+        log(`${ts()} CONTROL step=${step || '(none)'} NEW_CLIENTS=${newClientRatio} -> ${ratio} client_old=${n.client_old} client_new=${n.client_new}`);
+        newClientRatio = ratio;
+        controlStep = step;
+      }
+      controlError = '';
+    } catch (e) {
+      if (controlError !== e.message) log(`${ts()} CONTROL_ERROR ${e.message}`);
+      controlError = e.message;
+    }
+  }, 250).unref();
+}
+
 const bad = () => n.error + n.contract + n.stale + n.unavailable;
 const tick = setInterval(() =>
-  log(`${ts()} ok=${n.ok} error=${n.error} contract=${n.contract} stale=${n.stale} unavailable=${n.unavailable} rerouted=${n.rerouted}`), 5000);
+  log(`${ts()} ok=${n.ok} error=${n.error} contract=${n.contract} stale=${n.stale} unavailable=${n.unavailable} rerouted=${n.rerouted} client_old=${n.client_old} client_new=${n.client_new} new_ratio=${newClientRatio}`), 5000);
 
 await Promise.all(Array.from({ length: WORKERS }, async () => {
   while (!stop) {
@@ -173,6 +208,6 @@ await Promise.all(Array.from({ length: WORKERS }, async () => {
   }
 }));
 clearInterval(tick);
-log(`${ts()} FINAL ok=${n.ok} error=${n.error} contract=${n.contract} stale=${n.stale} unavailable=${n.unavailable} rerouted=${n.rerouted}`);
+log(`${ts()} FINAL ok=${n.ok} error=${n.error} contract=${n.contract} stale=${n.stale} unavailable=${n.unavailable} rerouted=${n.rerouted} client_old=${n.client_old} client_new=${n.client_new} new_ratio=${newClientRatio}`);
 log(bad() === 0 ? 'RESULT: zero failed requests' : `RESULT: ${bad()} failed requests`);
 process.exit(bad() === 0 ? 0 : 1);

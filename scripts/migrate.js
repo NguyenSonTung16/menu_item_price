@@ -2,10 +2,11 @@
 //   migrations/NNN_name.up.sql   and   migrations/NNN_name.down.sql
 // `up` applies every pending step; `down` reverts the LAST applied step only.
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { open, DB_PATH } from '../src/db.js';
 
-const DIR = new URL('../migrations/', import.meta.url).pathname;
+const DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'migrations');
 const db = open();
 db.exec('CREATE TABLE IF NOT EXISTS schema_migrations (version TEXT PRIMARY KEY, applied_at TEXT NOT NULL)');
 
@@ -21,7 +22,13 @@ function run(sql, after) {
 
 const cmd = process.argv[2] ?? 'status';
 if (cmd === 'up') {
-  const pending = versions.filter((v) => !applied.has(v));
+  const toIndex = process.argv.indexOf('--to');
+  const target = toIndex === -1 ? undefined : process.argv[toIndex + 1];
+  if (toIndex !== -1 && (!target || !versions.includes(target))) {
+    console.error(`unknown migration target: ${target ?? '(missing)'}`);
+    process.exit(2);
+  }
+  const pending = versions.filter((v) => !applied.has(v) && (!target || v <= target));
   if (!pending.length) console.log('nothing to apply');
   for (const v of pending) {
     run(readFileSync(join(DIR, `${v}.up.sql`), 'utf8'), () =>
