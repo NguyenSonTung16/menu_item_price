@@ -1,6 +1,6 @@
 IA#2 OFFICIAL
-Started 2026-10-10T01:40:48.694Z
-DB_PATH=D:\vscode\web advance\awad-price-migration-starter\data\demo.db
+Started 2026-10-10T09:03:54.556Z
+DB_PATH=C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db
 === verify every migration down on disposable databases ===
 
 === DOWN CHECK 001 up ===
@@ -10,7 +10,7 @@ DB_PATH=D:\vscode\web advance\awad-price-migration-starter\data\demo.db
 
 applied  001_init
 STDERR:
-(node:5476) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:33276) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -21,7 +21,7 @@ EXIT_CODE=0
 
 reverted 001_init
 STDERR:
-(node:17328) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:28956) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -30,12 +30,12 @@ EXIT_CODE=0
 > awad-price-migration-starter@1.0.0 migrate:status
 > node scripts/migrate.js status
 
-db C:\Users\tung1\AppData\Local\Temp\ia2-demo-u3cEEv\down\001.db
+db C:\Users\tung1\AppData\Local\Temp\ia2-demo-PBQzHU\down\001.db
 [ ] 001_init
 [ ] 002_expand_price_vnd
 [ ] 003_drop_price
 STDERR:
-(node:228) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:29792) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -47,7 +47,7 @@ EXIT_CODE=0
 applied  001_init
 applied  002_expand_price_vnd
 STDERR:
-(node:17424) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:30360) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -58,7 +58,7 @@ EXIT_CODE=0
 
 seeded 2 menu items
 STDERR:
-(node:23152) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:860) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -69,7 +69,7 @@ EXIT_CODE=0
 
 reverted 002_expand_price_vnd
 STDERR:
-(node:25580) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:18568) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -91,7 +91,7 @@ EXIT_CODE=0
 applied  001_init
 applied  002_expand_price_vnd
 STDERR:
-(node:20320) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:16472) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -102,7 +102,7 @@ EXIT_CODE=0
 
 seeded 2 menu items
 STDERR:
-(node:14548) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:23280) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -111,11 +111,11 @@ EXIT_CODE=0
 > awad-price-migration-starter@1.0.0 backfill
 > node scripts/backfill-price-vnd.js --delay-ms=0
 
-backfill start db=C:\Users\tung1\AppData\Local\Temp\ia2-demo-u3cEEv\down\003.db batch_size=500 delay_ms=0
+backfill start db=C:\Users\tung1\AppData\Local\Temp\ia2-demo-PBQzHU\down\003.db batch_size=500 delay_ms=0
 batch=1 repaired=2 total=2
 backfill done batches=1 repaired=2; rerunning now should repair 0 rows
 STDERR:
-(node:25704) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:27336) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -126,7 +126,7 @@ EXIT_CODE=0
 
 applied  003_drop_price
 STDERR:
-(node:19048) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:26460) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -137,7 +137,7 @@ EXIT_CODE=0
 
 reverted 003_drop_price
 STDERR:
-(node:22932) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:13276) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -155,9 +155,9 @@ CONSISTENT
 EXIT_CODE=0
 
 === DOWN CHECK 003 verify re-derived price ===
-{"price":231,"price_vnd":231000}
+{"price":124.5,"price_vnd":124500}
 STDERR:
-(node:14444) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:3124) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -180,9 +180,9 @@ Preparing worktree (detached HEAD 173c8f4)
 EXIT_CODE=0
 
 === create worktree v4 ===
-HEAD is now at 476fc79 Document and automate zero-downtime migration replay
+HEAD is now at cdef955 Retry Windows control file updates during migration replay
 STDERR:
-Preparing worktree (detached HEAD 476fc79)
+Preparing worktree (detached HEAD cdef955)
 EXIT_CODE=0
 
 === PREFLIGHT v1 npm test ===
@@ -190,12 +190,12 @@ EXIT_CODE=0
 > awad-price-migration-starter@1.0.0 test
 > node --test --test-reporter=spec
 
-(node:22204) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:32052) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-✔ GET /menu/:id returns price in thousands of dong (100.7852ms)
-✔ PATCH /menu/:id changes the price (14.5215ms)
-✔ POST /orders totals at the current price (6.6818ms)
-✔ errors have one shape (8.9814ms)
+✔ GET /menu/:id returns price in thousands of dong (95.7486ms)
+✔ PATCH /menu/:id changes the price (12.8265ms)
+✔ POST /orders totals at the current price (5.9663ms)
+✔ errors have one shape (7.94ms)
 ℹ tests 4
 ℹ suites 0
 ℹ pass 4
@@ -203,7 +203,7 @@ EXIT_CODE=0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 449.5114
+ℹ duration_ms 478.9063
 EXIT_CODE=0
 
 === PREFLIGHT v2 npm test ===
@@ -211,14 +211,14 @@ EXIT_CODE=0
 > awad-price-migration-starter@1.0.0 test
 > node --test --test-reporter=spec
 
-(node:26836) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:17728) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-✔ GET /menu/:id keeps the legacy price contract (104.1895ms)
-✔ PATCH /menu/:id accepts the legacy price and updates the new column too (15.3392ms)
-✔ POST /orders totals at the current price in thousands of dong (5.9992ms)
-✔ v2+ accepts integer priceVnd on create and re-pricing (11.5657ms)
-✔ v2+ rejects fractional and conflicting priceVnd input (12.8903ms)
-✔ errors retain the starter shape (6.6809ms)
+✔ GET /menu/:id keeps the legacy price contract (122.4524ms)
+✔ PATCH /menu/:id accepts the legacy price and updates the new column too (14.7546ms)
+✔ POST /orders totals at the current price in thousands of dong (6.8554ms)
+✔ v2+ accepts integer priceVnd on create and re-pricing (11.1591ms)
+✔ v2+ rejects fractional and conflicting priceVnd input (11.5598ms)
+✔ errors retain the starter shape (6.4733ms)
 ℹ tests 6
 ℹ suites 0
 ℹ pass 6
@@ -226,7 +226,7 @@ EXIT_CODE=0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 473.4862
+ℹ duration_ms 600.3783
 EXIT_CODE=0
 
 === PREFLIGHT v3 npm test ===
@@ -234,14 +234,14 @@ EXIT_CODE=0
 > awad-price-migration-starter@1.0.0 test
 > node --test --test-reporter=spec
 
-(node:21168) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:27748) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-✔ GET /menu/:id keeps the legacy price contract (108.0328ms)
-✔ PATCH /menu/:id accepts the legacy price and updates the new column too (13.2337ms)
-✔ POST /orders totals at the current price in thousands of dong (6.4801ms)
-✔ v2+ accepts integer priceVnd on create and re-pricing (9.4721ms)
-✔ v2+ rejects fractional and conflicting priceVnd input (10.2187ms)
-✔ errors retain the starter shape (6.6003ms)
+✔ GET /menu/:id keeps the legacy price contract (101.8496ms)
+✔ PATCH /menu/:id accepts the legacy price and updates the new column too (15.3369ms)
+✔ POST /orders totals at the current price in thousands of dong (6.5841ms)
+✔ v2+ accepts integer priceVnd on create and re-pricing (10.45ms)
+✔ v2+ rejects fractional and conflicting priceVnd input (11.1223ms)
+✔ errors retain the starter shape (6.7281ms)
 ℹ tests 6
 ℹ suites 0
 ℹ pass 6
@@ -249,7 +249,7 @@ EXIT_CODE=0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 478.4106
+ℹ duration_ms 491.3266
 EXIT_CODE=0
 
 === PREFLIGHT v4 npm test ===
@@ -257,18 +257,18 @@ EXIT_CODE=0
 > awad-price-migration-starter@1.0.0 test
 > node --test --test-reporter=spec
 
-(node:13824) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:5984) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-✔ GET /menu/:id keeps the legacy price contract (107.0492ms)
-✔ PATCH /menu/:id accepts the legacy price and updates the new column too (14.9506ms)
-✔ POST /orders totals at the current price in thousands of dong (8.1423ms)
-✔ v2+ accepts integer priceVnd on create and re-pricing (10.0888ms)
-✔ v2+ rejects fractional and conflicting priceVnd input (10.8899ms)
-✔ errors retain the starter shape (7.2879ms)
-(node:14924) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+✔ GET /menu/:id keeps the legacy price contract (117.5124ms)
+✔ PATCH /menu/:id accepts the legacy price and updates the new column too (16.3554ms)
+✔ POST /orders totals at the current price in thousands of dong (9.4099ms)
+✔ v2+ accepts integer priceVnd on create and re-pricing (14.0233ms)
+✔ v2+ rejects fractional and conflicting priceVnd input (15.2771ms)
+✔ errors retain the starter shape (9.7067ms)
+(node:10056) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-✔ backfill repairs null and stale values in small batches and is idempotent (301.7028ms)
-✔ backfill refuses a price that cannot be represented as positive VND (147.7367ms)
+✔ backfill repairs null and stale values in small batches and is idempotent (324.3586ms)
+✔ backfill refuses a price that cannot be represented as positive VND (182.8533ms)
 ℹ tests 8
 ℹ suites 0
 ℹ pass 8
@@ -276,7 +276,7 @@ EXIT_CODE=0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 668.206
+ℹ duration_ms 784.0137
 EXIT_CODE=0
 
 === S0 initialize v1 schema ===
@@ -286,7 +286,7 @@ EXIT_CODE=0
 
 applied  001_init
 STDERR:
-(node:14532) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:30320) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -297,7 +297,7 @@ EXIT_CODE=0
 
 seeded 20000 menu items
 STDERR:
-(node:29564) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:1648) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -310,13 +310,13 @@ columns                id, name, price
 rows                   20000
 CONSISTENT
 EXIT_CODE=0
-[server 3001] (node:11252) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[server 3001] (node:15352) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-[server 3001] menu service on :3001 · db D:\vscode\web advance\awad-price-migration-starter\data\demo.db · pid 11252
+[server 3001] menu service on :3001 · db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db · pid 15352
 health port=3001 version=v1 ok
-[server 3002] (node:17372) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[server 3002] (node:21528) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-[server 3002] menu service on :3002 · db D:\vscode\web advance\awad-price-migration-starter\data\demo.db · pid 17372
+[server 3002] menu service on :3002 · db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db · pid 21528
 health port=3002 version=v1 ok
 
 === S0 live traffic: npm run check ===
@@ -325,7 +325,7 @@ health port=3002 version=v1 ok
 > node scripts/check.js
 
 columns                id, name, price
-rows                   20049
+rows                   20043
 CONSISTENT
 EXIT_CODE=0
 
@@ -336,7 +336,7 @@ EXIT_CODE=0
 
 applied  002_expand_price_vnd
 STDERR:
-(node:26664) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:17492) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -346,18 +346,18 @@ EXIT_CODE=0
 > node scripts/check.js
 
 columns                id, name, price, price_vnd
-rows                   20116
-price_vnd_null         20116
+rows                   20098
+price_vnd_null         20098
 price_vnd_not_integer  0
 disagree               0
-CONSISTENT, but 20116 rows have no price_vnd yet — nothing may read price_vnd until they do
+CONSISTENT, but 20098 rows have no price_vnd yet — nothing may read price_vnd until they do
 EXIT_CODE=0
 
 === rolling restart port=3001 tag=v2 ===
 [server 3001] exited code=null signal=SIGINT
-[server 3001] (node:22716) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[server 3001] (node:5448) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-[server 3001] menu service v2 on :3001 · db D:\vscode\web advance\awad-price-migration-starter\data\demo.db · pid 22716
+[server 3001] menu service v2 on :3001 · db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db · pid 5448
 health port=3001 version=v2 ok
 
 === S2A mixed versions: npm run check ===
@@ -366,19 +366,19 @@ health port=3001 version=v2 ok
 > node scripts/check.js
 
 columns                id, name, price, price_vnd
-rows                   20153
-price_vnd_null         20023
+rows                   20133
+price_vnd_null         19982
 price_vnd_not_integer  0
-disagree               2
+disagree               5
 INCONSISTENT
 EXIT_CODE=1
-EXPECTED: legacy price may be stale after v4 stopped writing it.
+EXPECTED: pre-backfill mixed deployment: v1 writes only price, so price_vnd may be NULL or stale; do not start a v3 reader yet.
 
 === rolling restart port=3002 tag=v2 ===
 [server 3002] exited code=null signal=SIGINT
-[server 3002] (node:12388) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[server 3002] (node:9656) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-[server 3002] menu service v2 on :3002 · db D:\vscode\web advance\awad-price-migration-starter\data\demo.db · pid 12388
+[server 3002] menu service v2 on :3002 · db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db · pid 9656
 health port=3002 version=v2 ok
 
 === S2B both v2: npm run check ===
@@ -387,20 +387,20 @@ health port=3002 version=v2 ok
 > node scripts/check.js
 
 columns                id, name, price, price_vnd
-rows                   20212
-price_vnd_null         19524
+rows                   20194
+price_vnd_null         19529
 price_vnd_not_integer  0
-disagree               2
+disagree               3
 INCONSISTENT
 EXIT_CODE=1
-EXPECTED: legacy price may be stale after v4 stopped writing it.
+EXPECTED: pre-backfill: historical rows may still have NULL or stale price_vnd even though both instances now dual-write; S3 must make the data consistent before v3 starts.
 
 === S3 backfill under traffic ===
 
 > awad-price-migration-starter@1.0.0 backfill
 > node scripts/backfill-price-vnd.js --batch-size=500 --delay-ms=25
 
-backfill start db=D:\vscode\web advance\awad-price-migration-starter\data\demo.db batch_size=500 delay_ms=25
+backfill start db=C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db batch_size=500 delay_ms=25
 batch=1 repaired=500 total=500
 batch=2 repaired=500 total=1000
 batch=3 repaired=500 total=1500
@@ -439,10 +439,10 @@ batch=35 repaired=500 total=17500
 batch=36 repaired=500 total=18000
 batch=37 repaired=500 total=18500
 batch=38 repaired=500 total=19000
-batch=39 repaired=294 total=19294
-backfill done batches=39 repaired=19294; rerunning now should repair 0 rows
+batch=39 repaired=218 total=19218
+backfill done batches=39 repaired=19218; rerunning now should repair 0 rows
 STDERR:
-(node:6780) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:12488) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -451,14 +451,34 @@ EXIT_CODE=0
 > awad-price-migration-starter@1.0.0 backfill
 > node scripts/backfill-price-vnd.js --batch-size=500 --delay-ms=0
 
-backfill start db=D:\vscode\web advance\awad-price-migration-starter\data\demo.db batch_size=500 delay_ms=0
+backfill start db=C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db batch_size=500 delay_ms=0
 backfill done batches=0 repaired=0; rerunning now should repair 0 rows
 STDERR:
-(node:29472) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:33080) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
 === S3 after backfill: npm run check ===
+
+> awad-price-migration-starter@1.0.0 check
+> node scripts/check.js
+
+columns                id, name, price, price_vnd
+rows                   20359
+price_vnd_null         0
+price_vnd_not_integer  0
+disagree               0
+CONSISTENT
+EXIT_CODE=0
+
+=== rolling restart port=3001 tag=v3 ===
+[server 3001] exited code=null signal=SIGINT
+[server 3001] (node:30852) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+[server 3001] menu service v2 on :3001 · db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db · pid 30852
+health port=3001 version=v3 ok
+
+=== S4A mixed readers: npm run check ===
 
 > awad-price-migration-starter@1.0.0 check
 > node scripts/check.js
@@ -471,31 +491,11 @@ disagree               0
 CONSISTENT
 EXIT_CODE=0
 
-=== rolling restart port=3001 tag=v3 ===
-[server 3001] exited code=null signal=SIGINT
-[server 3001] (node:16260) ExperimentalWarning: SQLite is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
-[server 3001] menu service v2 on :3001 · db D:\vscode\web advance\awad-price-migration-starter\data\demo.db · pid 16260
-health port=3001 version=v3 ok
-
-=== S4A mixed readers: npm run check ===
-
-> awad-price-migration-starter@1.0.0 check
-> node scripts/check.js
-
-columns                id, name, price, price_vnd
-rows                   20442
-price_vnd_null         0
-price_vnd_not_integer  0
-disagree               0
-CONSISTENT
-EXIT_CODE=0
-
 === rolling restart port=3002 tag=v3 ===
 [server 3002] exited code=null signal=SIGINT
-[server 3002] (node:11428) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[server 3002] (node:18816) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-[server 3002] menu service v2 on :3002 · db D:\vscode\web advance\awad-price-migration-starter\data\demo.db · pid 11428
+[server 3002] menu service v2 on :3002 · db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db · pid 18816
 health port=3002 version=v3 ok
 
 === S4B both v3: npm run check ===
@@ -504,7 +504,7 @@ health port=3002 version=v3 ok
 > node scripts/check.js
 
 columns                id, name, price, price_vnd
-rows                   20482
+rows                   20460
 price_vnd_null         0
 price_vnd_not_integer  0
 disagree               0
@@ -513,9 +513,9 @@ EXIT_CODE=0
 
 === rolling restart port=3001 tag=v2 ===
 [server 3001] exited code=null signal=SIGINT
-[server 3001] (node:22300) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[server 3001] (node:24036) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-[server 3001] menu service v2 on :3001 · db D:\vscode\web advance\awad-price-migration-starter\data\demo.db · pid 22300
+[server 3001] menu service v2 on :3001 · db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db · pid 24036
 health port=3001 version=v2 ok
 
 === R1A A=v2 B=v3: npm run check ===
@@ -524,7 +524,7 @@ health port=3001 version=v2 ok
 > node scripts/check.js
 
 columns                id, name, price, price_vnd
-rows                   20524
+rows                   20502
 price_vnd_null         0
 price_vnd_not_integer  0
 disagree               0
@@ -533,9 +533,9 @@ EXIT_CODE=0
 
 === rolling restart port=3002 tag=v2 ===
 [server 3002] exited code=null signal=SIGINT
-[server 3002] (node:13036) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[server 3002] (node:31648) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-[server 3002] menu service v2 on :3002 · db D:\vscode\web advance\awad-price-migration-starter\data\demo.db · pid 13036
+[server 3002] menu service v2 on :3002 · db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db · pid 31648
 health port=3002 version=v2 ok
 
 === R1B both v2: npm run check ===
@@ -544,7 +544,7 @@ health port=3002 version=v2 ok
 > node scripts/check.js
 
 columns                id, name, price, price_vnd
-rows                   20554
+rows                   20557
 price_vnd_null         0
 price_vnd_not_integer  0
 disagree               0
@@ -553,9 +553,9 @@ EXIT_CODE=0
 
 === rolling restart port=3001 tag=v3 ===
 [server 3001] exited code=null signal=SIGINT
-[server 3001] (node:24856) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[server 3001] (node:17728) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-[server 3001] menu service v2 on :3001 · db D:\vscode\web advance\awad-price-migration-starter\data\demo.db · pid 24856
+[server 3001] menu service v2 on :3001 · db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db · pid 17728
 health port=3001 version=v3 ok
 
 === R2A A=v3 B=v2: npm run check ===
@@ -564,7 +564,7 @@ health port=3001 version=v3 ok
 > node scripts/check.js
 
 columns                id, name, price, price_vnd
-rows                   20601
+rows                   20626
 price_vnd_null         0
 price_vnd_not_integer  0
 disagree               0
@@ -573,9 +573,9 @@ EXIT_CODE=0
 
 === rolling restart port=3002 tag=v3 ===
 [server 3002] exited code=null signal=SIGINT
-[server 3002] (node:26228) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[server 3002] (node:25052) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-[server 3002] menu service v2 on :3002 · db D:\vscode\web advance\awad-price-migration-starter\data\demo.db · pid 26228
+[server 3002] menu service v2 on :3002 · db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db · pid 25052
 health port=3002 version=v3 ok
 
 === R2B both v3: npm run check ===
@@ -584,7 +584,7 @@ health port=3002 version=v3 ok
 > node scripts/check.js
 
 columns                id, name, price, price_vnd
-rows                   20632
+rows                   20685
 price_vnd_null         0
 price_vnd_not_integer  0
 disagree               0
@@ -593,9 +593,9 @@ EXIT_CODE=0
 
 === rolling restart port=3001 tag=v4 ===
 [server 3001] exited code=null signal=SIGINT
-[server 3001] (node:6596) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[server 3001] (node:8048) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-[server 3001] menu service v4 on :3001 · db D:\vscode\web advance\awad-price-migration-starter\data\demo.db · pid 6596
+[server 3001] menu service v4 on :3001 · db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db · pid 8048
 health port=3001 version=v4 ok
 S5A probe: v4 PATCH /menu/20000 -> 200 price=123.456 priceVnd=123456
 
@@ -605,30 +605,30 @@ S5A probe: v4 PATCH /menu/20000 -> 200 price=123.456 priceVnd=123456
 > node scripts/check.js
 
 columns                id, name, price, price_vnd
-rows                   20677
+rows                   20735
 price_vnd_null         0
 price_vnd_not_integer  0
-disagree               140
+disagree               210
 INCONSISTENT
 EXIT_CODE=1
-EXPECTED: legacy price may be stale after v4 stopped writing it.
+EXPECTED: v4 has stopped writing legacy price; check:vnd below verifies the authoritative price_vnd column.
 
 === S5A A=v4 B=v3 legacy mismatch expected: npm run check:vnd ===
 
 > awad-price-migration-starter@1.0.0 check:vnd
 > node scripts/check-price-vnd.js
 
-db D:\vscode\web advance\awad-price-migration-starter\data\demo.db
-rows=20702 price_vnd_null=0 price_vnd_invalid=0
+db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db
+rows=20783 price_vnd_null=0 price_vnd_invalid=0
 legacy price column is present; compare/ignore only after the documented point where v4 stopped writing it
 CANONICAL PRICE_VND VALID
 EXIT_CODE=0
 
 === rolling restart port=3002 tag=v4 ===
 [server 3002] exited code=null signal=SIGINT
-[server 3002] (node:3804) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[server 3002] (node:22168) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-[server 3002] menu service v4 on :3002 · db D:\vscode\web advance\awad-price-migration-starter\data\demo.db · pid 3804
+[server 3002] menu service v4 on :3002 · db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db · pid 22168
 health port=3002 version=v4 ok
 
 === S5B both v4 legacy mismatch expected: npm run check ===
@@ -637,21 +637,21 @@ health port=3002 version=v4 ok
 > node scripts/check.js
 
 columns                id, name, price, price_vnd
-rows                   20742
+rows                   20837
 price_vnd_null         0
 price_vnd_not_integer  0
-disagree               565
+disagree               781
 INCONSISTENT
 EXIT_CODE=1
-EXPECTED: legacy price may be stale after v4 stopped writing it.
+EXPECTED: both instances run v4 and no longer write legacy price; check:vnd below verifies the authoritative price_vnd column.
 
 === S5B both v4 legacy mismatch expected: npm run check:vnd ===
 
 > awad-price-migration-starter@1.0.0 check:vnd
 > node scripts/check-price-vnd.js
 
-db D:\vscode\web advance\awad-price-migration-starter\data\demo.db
-rows=20770 price_vnd_null=0 price_vnd_invalid=0
+db C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo.db
+rows=20868 price_vnd_null=0 price_vnd_invalid=0
 legacy price column is present; compare/ignore only after the documented point where v4 stopped writing it
 CANONICAL PRICE_VND VALID
 EXIT_CODE=0
@@ -663,7 +663,7 @@ EXIT_CODE=0
 
 applied  003_drop_price
 STDERR:
-(node:16976) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:5964) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
 EXIT_CODE=0
 
@@ -673,14 +673,14 @@ EXIT_CODE=0
 > node scripts/check.js
 
 columns                id, name, price_vnd
-rows                   20825
+rows                   21009
 price_vnd_null         0
 price_vnd_not_integer  0
 CONSISTENT
 EXIT_CODE=0
 old client PATCH /menu/20000 -> 200 price=66.5 priceVnd=66500
 new client POST /menu -> 201 price=123.456 priceVnd=123456
-GET detail=200 list=200 POST order=201 total=118
+GET detail=200 list=200 POST order=201 total=342
 
 === S6 after API probes: npm run check ===
 
@@ -688,7 +688,7 @@ GET detail=200 list=200 POST order=201 total=118
 > node scripts/check.js
 
 columns                id, name, price_vnd
-rows                   20869
+rows                   21063
 price_vnd_null         0
 price_vnd_not_integer  0
 CONSISTENT
@@ -700,7 +700,7 @@ EXIT_CODE=0
 > node scripts/check.js
 
 columns                id, name, price_vnd
-rows                   20992
+rows                   21279
 price_vnd_null         0
 price_vnd_not_integer  0
 CONSISTENT
@@ -708,13 +708,21 @@ EXIT_CODE=0
 DEMO SUCCESS: all migrations, rolling deploys, rollback, and final traffic completed.
 
 === cleanup worktree v1 ===
-EXIT_CODE=0
+STDERR:
+error: failed to delete '.git/worktrees/v1': Permission denied
+EXIT_CODE=255
 
 === cleanup worktree v2 ===
-EXIT_CODE=0
+STDERR:
+error: failed to delete '.git/worktrees/v2': Permission denied
+EXIT_CODE=255
 
 === cleanup worktree v3 ===
-EXIT_CODE=0
+STDERR:
+error: failed to delete '.git/worktrees/v3': Permission denied
+EXIT_CODE=255
 
 === cleanup worktree v4 ===
-EXIT_CODE=0
+STDERR:
+error: failed to delete '.git/worktrees/v4': Permission denied
+EXIT_CODE=255

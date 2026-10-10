@@ -61,11 +61,13 @@ function ok(result, label) {
 function check(label, options = {}) {
   const allowLegacyStale = options.allowLegacyStale ?? false;
   const checkVnd = options.checkVnd ?? false;
+  const expectedExplanation = options.expectedExplanation;
   const result = npm(['run', 'check'], label + ': npm run check');
   if (result.code !== 0) {
     if (!allowLegacyStale || !result.output.includes('INCONSISTENT'))
       throw new Error(label + ' consistency check failed; see ' + checkLog);
-    record('EXPECTED: legacy price may be stale after v4 stopped writing it.');
+    if (!expectedExplanation) throw new Error(label + ' must explain its expected inconsistency');
+    record('EXPECTED: ' + expectedExplanation);
   }
   if (checkVnd) {
     ok(npm(['run', 'check:vnd'], label + ': npm run check:vnd'), label + ' canonical VND check');
@@ -269,12 +271,18 @@ async function main() {
 
     await roll(ports[0], 'v2', worktrees);
     await setControl('S2A A=v2 B=v1', 0);
-    check('S2A mixed versions', { allowLegacyStale: true });
+    check('S2A mixed versions', {
+      allowLegacyStale: true,
+      expectedExplanation: 'pre-backfill mixed deployment: v1 writes only price, so price_vnd may be NULL or stale; do not start a v3 reader yet.',
+    });
     assertNoTrafficFailures();
     await roll(ports[1], 'v2', worktrees);
     await setControl('S2B both dual-write; enable new clients', 0.3);
     await pause(1000);
-    check('S2B both v2', { allowLegacyStale: true });
+    check('S2B both v2', {
+      allowLegacyStale: true,
+      expectedExplanation: 'pre-backfill: historical rows may still have NULL or stale price_vnd even though both instances now dual-write; S3 must make the data consistent before v3 starts.',
+    });
 
     await setControl('S3 backfill', 0.3);
     ok(npm(['run', 'backfill', '--', '--batch-size=500', '--delay-ms=25'], 'S3 backfill under traffic'), 'backfill');
@@ -316,12 +324,23 @@ async function main() {
     const probeBody = await probe.json();
     if (probe.status !== 200 || probeBody.priceVnd !== 123456) throw new Error('v4-only write probe failed');
     record('S5A probe: v4 PATCH /menu/20000 -> ' + probe.status + ' price=' + probeBody.price + ' priceVnd=' + probeBody.priceVnd);
-    check('S5A A=v4 B=v3 legacy mismatch expected', { allowLegacyStale: true, checkVnd: true });
+    check('S5A A=v4 B=v3 legacy mismatch expected', {
+      allowLegacyStale: true,
+      checkVnd: true,
+      expectedExplanation: 'v4 has stopped writing legacy price; check:vnd below verifies the authoritative price_vnd column.',
+    });
     await roll(ports[1], 'v4', worktrees);
     await setControl('S5B both v4', 0.3);
-    check('S5B both v4 legacy mismatch expected', { allowLegacyStale: true, checkVnd: true });
+    check('S5B both v4 legacy mismatch expected', {
+      allowLegacyStale: true,
+      checkVnd: true,
+      expectedExplanation: 'both instances run v4 and no longer write legacy price; check:vnd below verifies the authoritative price_vnd column.',
+    });
     assertNoTrafficFailures();
 
+    await setControl('S6 contract migration: drop legacy price while both instances serve v4', 0.3);
+    await pause(350); // Let the single traffic process record the S6 marker before DDL starts.
+    await checkTrafficRunning();
     ok(npm(['run', 'migrate', '--', '--to', '003_drop_price'], 'S6 drop price after all instances use v4'), '003 up');
     check('S6 after contract');
     await smokeApi();
