@@ -1,6 +1,7 @@
 import { createServer } from 'node:http';
 
-// v3 reads the migrated integer but continues writing both columns for rollback.
+// v4 uses price_vnd as the sole database representation. The public price
+// field stays in thousands of dong for compatibility with old clients.
 const json = (res, status, body) => {
   res.writeHead(status, { 'content-type': 'application/json' });
   res.end(JSON.stringify(body));
@@ -34,8 +35,8 @@ export function createApp(db) {
   const q = {
     list: db.prepare('SELECT id, name, price_vnd / 1000.0 AS price, price_vnd FROM menu_items ORDER BY id LIMIT ? OFFSET ?'),
     get: db.prepare('SELECT id, name, price_vnd / 1000.0 AS price, price_vnd FROM menu_items WHERE id = ?'),
-    insert: db.prepare('INSERT INTO menu_items (name, price, price_vnd) VALUES (?, ?, ?)'),
-    setPrice: db.prepare('UPDATE menu_items SET price = ?, price_vnd = ? WHERE id = ?'),
+    insert: db.prepare('INSERT INTO menu_items (name, price_vnd) VALUES (?, ?)'),
+    setPrice: db.prepare('UPDATE menu_items SET price_vnd = ? WHERE id = ?'),
     insertOrder: db.prepare("INSERT INTO orders (created_at) VALUES (datetime('now'))"),
     insertLine: db.prepare('INSERT INTO order_items (order_id, menu_item_id, qty, unit_price) VALUES (?, ?, ?, ?)'),
   };
@@ -46,7 +47,7 @@ export function createApp(db) {
     const url = new URL(req.url, 'http://x');
     const parts = url.pathname.split('/').filter(Boolean);
 
-    if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, { ok: true, version: 'v3' });
+    if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, { ok: true, version: 'v4' });
 
     if (parts[0] === 'menu' && parts.length === 1) {
       if (req.method === 'GET') {
@@ -59,7 +60,7 @@ export function createApp(db) {
         const price = parsePrice(body);
         if (!body || typeof body.name !== 'string' || !body.name || !price)
           return error(res, 400, 'invalid_body', 'name and a valid price or integer priceVnd are required');
-        const { lastInsertRowid } = q.insert.run(body.name, price.price, price.priceVnd);
+        const { lastInsertRowid } = q.insert.run(body.name, price.priceVnd);
         return json(res, 201, view(q.get.get(lastInsertRowid)));
       }
     }
@@ -73,7 +74,7 @@ export function createApp(db) {
         const body = await readBody(req);
         const price = parsePrice(body);
         if (!price) return error(res, 400, 'invalid_body', 'a valid price or integer priceVnd is required');
-        q.setPrice.run(price.price, price.priceVnd, id);
+        q.setPrice.run(price.priceVnd, id);
         return json(res, 200, view(q.get.get(id)));
       }
     }

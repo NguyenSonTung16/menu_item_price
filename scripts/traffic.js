@@ -155,7 +155,8 @@ async function once() {
   if (!r) return fail('unavailable', 'GET /menu');
   n[`client_${client}`]++;
   if (r.status >= 500) return fail('error', `GET /menu -> ${r.status} via ${r.target}`);
-  if (r.status !== 200 || !Array.isArray(r.data) || r.data.some((x) => typeof x.price !== 'number'))
+  if (r.status !== 200 || !Array.isArray(r.data) || r.data.some((x) => typeof x.price !== 'number' ||
+      (client === 'new' && (!Number.isInteger(x.priceVnd) || x.priceVnd !== Math.round(x.price * 1000)))))
     return fail('contract', `GET /menu via ${r.target}: bad page`);
   n.ok++;
 }

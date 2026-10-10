@@ -22,7 +22,7 @@ if (!cols.has('price') || !cols.has('price_vnd')) {
   process.exit(2);
 }
 
-const badSource = db.prepare("SELECT count(*) AS n FROM menu_items WHERE price IS NULL OR typeof(price) NOT IN ('integer', 'real') OR price <= 0 OR price > 100000").get().n;
+const badSource = db.prepare("SELECT count(*) AS n FROM menu_items WHERE price IS NULL OR typeof(price) NOT IN ('integer', 'real') OR price <= 0 OR price > 100000 OR round(price * 1000) < 1").get().n;
 if (badSource !== 0) {
   console.error(`refusing to backfill: ${badSource} source prices are null or outside the supported range`);
   process.exit(1);

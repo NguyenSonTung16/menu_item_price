@@ -4,17 +4,22 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { open } from '../src/db.js';
 import { createApp } from '../src/app.js';
 
-let server, base, dbRef, supportsPriceVnd;
+let server, base, dbRef, supportsPrice, supportsPriceVnd;
 before(async () => {
   const db = open(':memory:');
   dbRef = db;
   const dir = new URL('../migrations/', import.meta.url);
   for (const f of readdirSync(dir).filter((f) => f.endsWith('.up.sql')).sort())
     db.exec(readFileSync(new URL(f, dir), 'utf8'));
-  supportsPriceVnd = db.prepare('PRAGMA table_info(menu_items)').all().some((c) => c.name === 'price_vnd');
-  if (supportsPriceVnd) {
+  const columns = new Set(db.prepare('PRAGMA table_info(menu_items)').all().map((c) => c.name));
+  supportsPrice = columns.has('price');
+  supportsPriceVnd = columns.has('price_vnd');
+  if (supportsPrice && supportsPriceVnd) {
     db.prepare('INSERT INTO menu_items (name, price, price_vnd) VALUES (?, ?, ?)').run('Phở bò', 45.5, 45500);
     db.prepare('INSERT INTO menu_items (name, price, price_vnd) VALUES (?, ?, ?)').run('Trà đá', 5, 5000);
+  } else if (supportsPriceVnd) {
+    db.prepare('INSERT INTO menu_items (name, price_vnd) VALUES (?, ?)').run('Phở bò', 45500);
+    db.prepare('INSERT INTO menu_items (name, price_vnd) VALUES (?, ?)').run('Trà đá', 5000);
   } else {
     db.exec("INSERT INTO menu_items (name, price) VALUES ('Phở bò', 45.5), ('Trà đá', 5)");
   }
@@ -43,7 +48,8 @@ test('PATCH /menu/:id accepts the legacy price and updates the new column too', 
   if (supportsPriceVnd) {
     assert.equal(r.body.priceVnd, 6000);
     assert.equal(dbRef.prepare('SELECT price_vnd FROM menu_items WHERE id = 2').get().price_vnd, 6000);
-    assert.equal(dbRef.prepare('SELECT price FROM menu_items WHERE id = 2').get().price, 6);
+    if (supportsPrice) assert.equal(dbRef.prepare('SELECT price FROM menu_items WHERE id = 2').get().price, 6);
+    assert.equal(dbRef.prepare('SELECT price_vnd FROM menu_items WHERE id = 2').get().price_vnd, 6000);
   }
 });
 
