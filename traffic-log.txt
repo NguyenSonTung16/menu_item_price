@@ -1,49 +1,49 @@
 
-=== traffic start 2026-10-10T09:04:25.974Z · targets http://127.0.0.1:3001 http://127.0.0.1:3002 · new clients 0 · control C:\Users\tung1\OneDrive\Desktop\IA2_menu_item_price_submission\menu_item_price\data\demo-traffic-control.json
-   0.4s CONTROL step=S0 old clients only NEW_CLIENTS=0 -> 0 client_old=181 client_new=0
-   2.4s CONTROL step=S1 expand NEW_CLIENTS=0 -> 0 client_old=2230 client_new=0
-   5.0s http://127.0.0.1:3001 down (ECONNRESET)
-   5.1s ok=5354 error=0 contract=0 stale=0 unavailable=0 rerouted=5 client_old=5354 client_new=0 new_ratio=0
-   5.3s http://127.0.0.1:3001 back
-   5.4s CONTROL step=S2A A=v2 B=v1 NEW_CLIENTS=0 -> 0 client_old=5655 client_new=0
-   7.0s http://127.0.0.1:3002 down (ECONNRESET)
-   7.4s http://127.0.0.1:3002 back
-   7.4s CONTROL step=S2B both dual-write; enable new clients NEW_CLIENTS=0 -> 0.3 client_old=7560 client_new=0
-  10.0s CONTROL step=S3 backfill NEW_CLIENTS=0.3 -> 0.3 client_old=9567 client_new=869
-  10.1s ok=10720 error=0 contract=0 stale=0 unavailable=0 rerouted=11 client_old=9762 client_new=958 new_ratio=0.3
-  15.1s ok=18778 error=0 contract=0 stale=0 unavailable=0 rerouted=11 client_old=15411 client_new=3367 new_ratio=0.3
-  15.3s http://127.0.0.1:3001 down (ECONNRESET)
-  15.6s http://127.0.0.1:3001 back
-  15.7s CONTROL step=S4A A=v3 B=v2 NEW_CLIENTS=0.3 -> 0.3 client_old=16071 client_new=3654
-  17.0s http://127.0.0.1:3002 down (ECONNRESET)
-  17.2s CONTROL step=S4B both read price_vnd and dual-write NEW_CLIENTS=0.3 -> 0.3 client_old=17901 client_new=4398
-  17.3s http://127.0.0.1:3002 back
-  18.6s http://127.0.0.1:3001 down (ECONNRESET)
-  18.9s http://127.0.0.1:3001 back
-  19.0s CONTROL step=R1A rollback A to v2 NEW_CLIENTS=0.3 -> 0.3 client_old=19880 client_new=5259
-  20.1s ok=27011 error=0 contract=0 stale=0 unavailable=0 rerouted=29 client_old=21221 client_new=5790 new_ratio=0.3
-  20.3s http://127.0.0.1:3002 down (ECONNRESET)
-  20.6s http://127.0.0.1:3002 back
-  20.7s CONTROL step=R1B rollback both to v2 NEW_CLIENTS=0.3 -> 0.3 client_old=21988 client_new=6072
-  21.9s http://127.0.0.1:3001 down (ECONNRESET)
-  22.2s http://127.0.0.1:3001 back
-  22.2s CONTROL step=R2A forward A to v3 NEW_CLIENTS=0.3 -> 0.3 client_old=23727 client_new=6800
-  23.6s http://127.0.0.1:3002 down (ECONNRESET)
-  23.9s http://127.0.0.1:3002 back
-  24.0s CONTROL step=R2B forward both to v3 NEW_CLIENTS=0.3 -> 0.3 client_old=25805 client_new=7642
-  25.1s ok=35314 error=0 contract=0 stale=0 unavailable=0 rerouted=50 client_old=27111 client_new=8203 new_ratio=0.3
-  25.3s http://127.0.0.1:3001 down (ECONNRESET)
-  25.6s http://127.0.0.1:3001 back
-  25.8s CONTROL step=S5A v4 writes only price_vnd NEW_CLIENTS=0.3 -> 0.3 client_old=27783 client_new=8522
-  28.3s http://127.0.0.1:3002 down (ECONNRESET)
-  28.6s http://127.0.0.1:3002 back
-  28.8s CONTROL step=S5B both v4 NEW_CLIENTS=0.3 -> 0.3 client_old=31327 client_new=9977
-  30.1s ok=43292 error=0 contract=0 stale=0 unavailable=0 rerouted=60 client_old=32692 client_new=10600 new_ratio=0.3
-  31.5s CONTROL step=S6 contract migration: drop legacy price while both instances serve v4 NEW_CLIENTS=0.3 -> 0.3 client_old=34300 client_new=11252
-  35.1s ok=51975 error=0 contract=0 stale=0 unavailable=0 rerouted=60 client_old=38777 client_new=13198 new_ratio=0.3
-  37.5s CONTROL step=S7 traffic after drop NEW_CLIENTS=0.3 -> 0.3 client_old=41368 client_new=14320
-  40.1s ok=60305 error=0 contract=0 stale=0 unavailable=0 rerouted=60 client_old=44563 client_new=15742 new_ratio=0.3
-  43.6s CONTROL step=S7 finishing traffic log NEW_CLIENTS=0.3 -> 0.3 client_old=48966 client_new=17648
-  43.6s CONTROL stop requested; finishing in-flight requests
-  43.6s FINAL ok=66622 error=0 contract=0 stale=0 unavailable=0 rerouted=60 client_old=48970 client_new=17652 new_ratio=0.3
+=== traffic start 2026-10-10T09:10:27.846Z · targets http://127.0.0.1:3001 http://127.0.0.1:3002 · new clients 0 · control C:\Users\tung1\AppData\Local\Temp\ia2_final_audit_23120399\data\demo-traffic-control.json
+   0.4s CONTROL step=S0 old clients only NEW_CLIENTS=0 -> 0 client_old=252 client_new=0
+   3.2s CONTROL step=S1 expand NEW_CLIENTS=0 -> 0 client_old=2764 client_new=0
+   5.1s ok=5394 error=0 contract=0 stale=0 unavailable=0 rerouted=0 client_old=5394 client_new=0 new_ratio=0
+   6.3s http://127.0.0.1:3001 down (ECONNRESET)
+   6.7s http://127.0.0.1:3001 back
+   6.7s CONTROL step=S2A A=v2 B=v1 NEW_CLIENTS=0 -> 0 client_old=8011 client_new=0
+   8.0s http://127.0.0.1:3002 down (ECONNRESET)
+   8.3s http://127.0.0.1:3002 back
+   8.5s CONTROL step=S2B both dual-write; enable new clients NEW_CLIENTS=0 -> 0.3 client_old=10992 client_new=0
+  10.2s ok=13817 error=0 contract=0 stale=0 unavailable=0 rerouted=8 client_old=12966 client_new=851 new_ratio=0.3
+  10.7s CONTROL step=S3 backfill NEW_CLIENTS=0.3 -> 0.3 client_old=13665 client_new=1139
+  15.2s ok=22082 error=0 contract=0 stale=0 unavailable=0 rerouted=8 client_old=18805 client_new=3277 new_ratio=0.3
+  16.3s http://127.0.0.1:3001 down (ECONNRESET)
+  16.6s http://127.0.0.1:3001 back
+  16.7s CONTROL step=S4A A=v3 B=v2 NEW_CLIENTS=0.3 -> 0.3 client_old=20753 client_new=4094
+  17.9s http://127.0.0.1:3002 down (ECONNRESET)
+  18.2s http://127.0.0.1:3002 back
+  18.2s CONTROL step=S4B both read price_vnd and dual-write NEW_CLIENTS=0.3 -> 0.3 client_old=22610 client_new=4893
+  19.5s http://127.0.0.1:3001 down (ECONNRESET)
+  19.8s http://127.0.0.1:3001 back
+  20.0s CONTROL step=R1A rollback A to v2 NEW_CLIENTS=0.3 -> 0.3 client_old=24769 client_new=5848
+  20.2s ok=30935 error=0 contract=0 stale=0 unavailable=0 rerouted=30 client_old=24984 client_new=5951 new_ratio=0.3
+  21.1s http://127.0.0.1:3002 down (ECONNRESET)
+  21.4s http://127.0.0.1:3002 back
+  21.5s CONTROL step=R1B rollback both to v2 NEW_CLIENTS=0.3 -> 0.3 client_old=26571 client_new=6622
+  22.9s http://127.0.0.1:3001 down (ECONNRESET)
+  23.2s http://127.0.0.1:3001 back
+  23.2s CONTROL step=R2A forward A to v3 NEW_CLIENTS=0.3 -> 0.3 client_old=28436 client_new=7432
+  24.6s http://127.0.0.1:3002 down (ECONNRESET)
+  24.9s http://127.0.0.1:3002 back
+  25.0s CONTROL step=R2B forward both to v3 NEW_CLIENTS=0.3 -> 0.3 client_old=30354 client_new=8269
+  25.2s ok=38891 error=0 contract=0 stale=0 unavailable=0 rerouted=46 client_old=30552 client_new=8339 new_ratio=0.3
+  26.4s http://127.0.0.1:3001 down (ECONNRESET)
+  26.7s http://127.0.0.1:3001 back
+  26.8s CONTROL step=S5A v4 writes only price_vnd NEW_CLIENTS=0.3 -> 0.3 client_old=32306 client_new=9089
+  29.5s http://127.0.0.1:3002 down (ECONNRESET)
+  29.8s http://127.0.0.1:3002 back
+  30.0s CONTROL step=S5B both v4 NEW_CLIENTS=0.3 -> 0.3 client_old=36093 client_new=10687
+  30.2s ok=47034 error=0 contract=0 stale=0 unavailable=0 rerouted=58 client_old=36273 client_new=10761 new_ratio=0.3
+  32.8s CONTROL step=S6 contract migration: drop legacy price while both instances serve v4 NEW_CLIENTS=0.3 -> 0.3 client_old=39445 client_new=12055
+  35.2s ok=55410 error=0 contract=0 stale=0 unavailable=0 rerouted=58 client_old=42123 client_new=13287 new_ratio=0.3
+  38.3s CONTROL step=S7 traffic after drop NEW_CLIENTS=0.3 -> 0.3 client_old=45865 client_new=14906
+  40.2s ok=64256 error=0 contract=0 stale=0 unavailable=0 rerouted=58 client_old=48365 client_new=15891 new_ratio=0.3
+  44.3s CONTROL step=S7 finishing traffic log NEW_CLIENTS=0.3 -> 0.3 client_old=53814 client_new=18193
+  44.3s CONTROL stop requested; finishing in-flight requests
+  44.3s FINAL ok=72015 error=0 contract=0 stale=0 unavailable=0 rerouted=58 client_old=53820 client_new=18195 new_ratio=0.3
 RESULT: zero failed requests

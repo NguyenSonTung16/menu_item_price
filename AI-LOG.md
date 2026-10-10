@@ -6,6 +6,7 @@ The assignment permits using an assistant and asks that assistance be disclosed.
 - Prepared `IA2_IMPLEMENTATION_PLAN.md` in the parent workspace and translated the plan into the repository's `MIGRATION.md` and `README.md`.
 - Implemented the v2 dual-write/API, v3 integer-read/dual-write, and v4 integer-only application code; migrations 002/003 and down files; a restartable batched backfill; canonical-column checker; mutable traffic control; tests; a tagged-version launcher; and this disclosure.
 - Ran `npm test`, migration up/down checks, and the full rehearsal described in `check-rehearsal-*.txt` and `traffic-rehearsal-*.txt`. The official hand-in run is recorded separately in `check-log.txt` and `traffic-log.txt`.
+- Performed a final ZIP/rubric audit, corrected the pre-backfill check explanations and S6 traffic marker, fixed temporary worktree cleanup in the demo runner, and regenerated the official logs and self-assessment evidence.
 
 ## Transcript đầy đủ của phiên hội thoại
 
